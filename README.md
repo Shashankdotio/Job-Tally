@@ -4,7 +4,7 @@
   <source media="(prefers-color-scheme: dark)" srcset="assets/JobTally_logo.png">
   <img src="assets/JobTally_logo.png" alt="JobTally" width="84" height="84">
 </picture>
-
+</div>
 
 # Job Tally for macOS
 
