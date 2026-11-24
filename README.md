@@ -4,7 +4,9 @@
   <source media="(prefers-color-scheme: dark)" srcset="assets/JobTally_logo.png">
   <img src="assets/JobTally_logo.png" alt="JobTally" width="84" height="84">
 </picture>
+
 # Job Tally for macOS
+
 </div>
 
 A lightweight native menu bar app for counting job applications. Click the menu bar icon to open the counter, then use + or − for quick applies and longer applications through company career pages. Use **History** to see saved totals by date, or **Quit Job Tally** to close the app. Launching another copy focuses the one already running.
