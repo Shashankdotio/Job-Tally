@@ -2,6 +2,19 @@
 
 A lightweight native menu bar app for counting job applications. Click the menu bar icon to open the counter, then use + or − for quick applies and longer applications through company career pages. Use **History** to see saved totals by date, or **Quit Job Tally** to close the app. Launching another copy focuses the one already running.
 
+## Preview
+
+<table>
+  <tr>
+    <th align="center">Daily counter</th>
+    <th align="center">Application history</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/demo.png" alt="Job Tally menu bar counter" width="400"></td>
+    <td align="center"><img src="assets/history.png" alt="Job Tally history with daily quick and long application totals" width="330"></td>
+  </tr>
+</table>
+
 The app icon is generated from `assets/JobTally_logo.png` each time you build.
 
 ## Daily history
