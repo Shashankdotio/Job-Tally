@@ -15,8 +15,6 @@ A lightweight native menu bar app for counting job applications. Click the menu 
   </tr>
 </table>
 
-The app icon is generated from `assets/JobTally_logo.png` each time you build.
-
 ## Daily history
 
 Counts are saved locally on your Mac by date. The popover shows each saved day with separate quick and long totals. Starting a new day creates a new daily count while preserving previous days. Existing counts from the first version migrate automatically.
