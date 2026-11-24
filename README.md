@@ -13,6 +13,7 @@ A lightweight native menu bar app for counting job applications. Click the menu 
 
 ## Preview
 
+<div align="center">
 <table>
   <tr>
     <th align="center">Daily counter</th>
@@ -23,6 +24,7 @@ A lightweight native menu bar app for counting job applications. Click the menu 
     <td align="center"><img src="assets/history.png" alt="Job Tally history with daily quick and long application totals" width="330"></td>
   </tr>
 </table>
+</div>
 
 ## Daily history
 
