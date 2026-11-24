@@ -17,10 +17,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let tally = DailyTally()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        if let bundleID = Bundle.main.bundleIdentifier,
+           let runningCopy = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
+            .first(where: { $0.processIdentifier != ProcessInfo.processInfo.processIdentifier }) {
+            runningCopy.activate()
+            NSApp.terminate(nil)
+            return
+        }
+
         NSApp.setActivationPolicy(.accessory)
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
             button.image = NSImage(systemSymbolName: "plus.forwardslash.minus", accessibilityDescription: "Job application tally")
+            button.image?.isTemplate = true
             button.imagePosition = .imageLeading
             button.title = " \(tally.total)"
             button.target = self
@@ -110,51 +119,95 @@ final class DailyTally: ObservableObject {
 
 struct TallyView: View {
     @ObservedObject var tally: DailyTally
+    @State private var showingHistory = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .firstTextBaseline) {
-                Text("Applications").font(.system(size: 19, weight: .semibold))
+                Text(showingHistory ? "History" : "Applications").font(.system(size: 19, weight: .semibold))
                 Spacer()
-                Text("TODAY").font(.system(size: 10, weight: .bold, design: .rounded)).tracking(1.2).foregroundStyle(.secondary)
+                Button(showingHistory ? "Today" : "History") {
+                    showingHistory.toggle()
+                }
+                .buttonStyle(.plain)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(Color.accentColor)
             }
-            Text("\(tally.total) total").font(.system(size: 12)).foregroundStyle(.secondary).padding(.top, 3)
-                .padding(.bottom, 15)
 
-            counterRow(title: "Quick apply", subtitle: "Fast applications", value: tally.quick, kind: .quick, tint: .blue)
-            Divider().padding(.vertical, 10)
-            counterRow(title: "Long application", subtitle: "Company career pages", value: tally.long, kind: .long, tint: .orange)
-
-            Divider().padding(.vertical, 12)
-            HStack {
-                Text("DAILY HISTORY").font(.system(size: 10, weight: .bold, design: .rounded)).tracking(1.1).foregroundStyle(.secondary)
-                Spacer()
-                Text("\(tally.datedHistory.count) days").font(.system(size: 10)).foregroundStyle(.tertiary)
-            }.padding(.bottom, 7)
-
-            if tally.datedHistory.isEmpty {
-                Text("Your daily totals will appear here.").font(.system(size: 12)).foregroundStyle(.secondary)
+            if showingHistory {
+                historyContent
             } else {
-                ScrollView {
-                    VStack(spacing: 0) {
-                        ForEach(tally.datedHistory) { entry in
-                            HStack {
-                                Text(historyDate(entry.date)).font(.system(size: 12, weight: .medium)).frame(width: 92, alignment: .leading)
-                                Spacer()
-                                Text("Quick  \(entry.counts.quick)").foregroundStyle(.blue)
-                                Text("Long  \(entry.counts.long)").foregroundStyle(.orange)
-                                Text("\(entry.counts.total)").fontWeight(.semibold).frame(width: 28, alignment: .trailing)
-                            }
-                            .font(.system(size: 11, design: .rounded)).padding(.vertical, 5)
-                            Divider()
-                        }
-                    }
-                }.frame(maxHeight: 210)
+                todayContent
+            }
+
+            Spacer(minLength: 8)
+            Divider().padding(.bottom, 8)
+            HStack {
+                Spacer()
+                Button {
+                    NSApp.terminate(nil)
+                } label: {
+                    Label("Quit Job Tally", systemImage: "power")
+                }
+                .buttonStyle(.plain)
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.secondary)
             }
         }
         .padding(18)
         .frame(width: 340, height: 440, alignment: .topLeading)
         .background(.regularMaterial)
+    }
+
+    private var todayContent: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Text("\(tally.total) total").font(.system(size: 12)).foregroundStyle(.secondary)
+                Spacer()
+                Text("TODAY").font(.system(size: 10, weight: .bold, design: .rounded)).tracking(1.2).foregroundStyle(.secondary)
+            }
+            .padding(.top, 3)
+            .padding(.bottom, 15)
+            counterRow(title: "Quick apply", subtitle: "Fast applications", value: tally.quick, kind: .quick, tint: .blue)
+            Divider().padding(.vertical, 10)
+            counterRow(title: "Long application", subtitle: "Company career pages", value: tally.long, kind: .long, tint: .orange)
+        }
+    }
+
+    private var historyContent: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Applications by date").font(.system(size: 12)).foregroundStyle(.secondary)
+                .padding(.top, 3).padding(.bottom, 12)
+            if tally.datedHistory.isEmpty {
+                Text("Your daily totals will appear here.")
+                    .font(.system(size: 12)).foregroundStyle(.secondary)
+            } else {
+                HStack {
+                    Text("DATE").frame(width: 94, alignment: .leading)
+                    Spacer()
+                    Text("QUICK")
+                    Text("LONG")
+                    Text("TOTAL").frame(width: 36, alignment: .trailing)
+                }
+                .font(.system(size: 9, weight: .bold, design: .rounded)).tracking(0.7).foregroundStyle(.tertiary)
+                .padding(.bottom, 4)
+                ScrollView {
+                    VStack(spacing: 0) {
+                        ForEach(tally.datedHistory) { entry in
+                            HStack {
+                                Text(historyDate(entry.date)).fontWeight(.medium).frame(width: 94, alignment: .leading)
+                                Spacer()
+                                Text("\(entry.counts.quick)").foregroundStyle(.blue).frame(width: 42)
+                                Text("\(entry.counts.long)").foregroundStyle(.orange).frame(width: 42)
+                                Text("\(entry.counts.total)").fontWeight(.semibold).frame(width: 36, alignment: .trailing)
+                            }
+                            .font(.system(size: 11, design: .rounded)).padding(.vertical, 7)
+                            Divider()
+                        }
+                    }
+                }.frame(maxHeight: 300)
+            }
+        }
     }
 
     private func historyDate(_ value: String) -> String {

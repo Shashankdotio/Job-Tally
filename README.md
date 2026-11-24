@@ -1,6 +1,8 @@
 # Job Tally for macOS
 
-A lightweight native menu bar app for counting job applications. Click the menu bar icon to open the counter, then use + or − for quick applies and longer applications through company career pages.
+A lightweight native menu bar app for counting job applications. Click the menu bar icon to open the counter, then use + or − for quick applies and longer applications through company career pages. Use **History** to see saved totals by date, or **Quit Job Tally** to close the app. Launching another copy focuses the one already running.
+
+The app icon is generated from `assets/JobTally_logo.png` each time you build.
 
 ## Daily history
 
